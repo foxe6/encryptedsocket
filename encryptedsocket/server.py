@@ -3,7 +3,7 @@ import json
 import pickle
 import threading
 from .utils import *
-from omnitools import *
+from omnitools import encryptedsocket_function, randi, p, utf8d
 from debugging import *
 
 

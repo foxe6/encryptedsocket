@@ -2,6 +2,7 @@ import socket
 import json
 import pickle
 from .utils import *
+from omnitools import randi, jd_and_utf8e, utf8d
 
 
 __ALL__ = ["SC"]
@@ -25,7 +26,7 @@ class SC(object):
     def request(self, command: str, data: Any = None) -> Any:
         request = dict(command=command, data=data)
         try:
-            request = utf8e(jd(request))
+            request = jd_and_utf8e(request)
         except:
             request = pickle.dumps(request)
         if self.encrypted and self.key:
