@@ -15,9 +15,8 @@ def encrypt(key: str_or_bytes, plaintext: str_or_bytes) -> bytes:
 
 
 def decrypt(key: str_or_bytes, ciphertext: str) -> Any:
-    mac, ciphertext = ciphertext.split(" ")
-    hash = mac(key, ciphertext)
-    if hash == mac:
+    hash, ciphertext = ciphertext.split(" ")
+    if hash == mac(key, ciphertext):
         ciphertext = AESCipher(key).decrypt(ciphertext)
         try:
             return jl(ciphertext)
