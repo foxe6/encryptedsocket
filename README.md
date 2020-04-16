@@ -29,17 +29,21 @@ encryptedsocket
 # both sides have access to their classes
 
 from encryptedsocket import *
+from easyrsa import *
+
+# prepare rsa key pair
+kp = EasyRSA(bits=1024).gen_key_pair()
 
 # server
 def test(data):
     return f"Data:\t{data}"
 functions = dict(test=test)
-SS(functions=functions).start()
+SS(functions=functions, private_key=kp["private_key"]).start()
 print("test socket server started.", flush=True)
 # # Nothing is printed, you must start it from an other thread
 
 # client
-sc = SC()
+sc = SC(public_key=kp["public_key"])
 for i in range(5):
     print(sc.request(command="test", data=f"Hello, {i}!"))
 for i in range(5):
