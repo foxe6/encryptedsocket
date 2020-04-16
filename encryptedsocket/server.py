@@ -17,7 +17,7 @@ class SS(object):
         self.terminate = False
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.s.bind((host, int(port)))
-        self.s.listen()
+        self.s.listen(5)
         self.__key = {}
         self.functions = functions or {}
         self.encrypted = encrypted

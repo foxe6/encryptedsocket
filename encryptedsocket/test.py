@@ -13,8 +13,9 @@ def main() -> None:
         SS(functions=functions).start()
         p("test socket server started.")
     elif command == "client":
+        sc = SC()
         for i in range(5):
-            p(SC().request(command="test", data=f"Hello, {i}!"))
+            p(sc.request(command="test", data=f"Hello, {i}!"))
         p("test socket client started.")
     else:
         exit(1)

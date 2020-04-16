@@ -44,9 +44,14 @@ print("test socket server started.", flush=True)
 # # Nothing is printed, you must start it from an other thread
 
 # client
+sc = SC()
 for i in range(5):
-    print(SC().request(command="test", data=f"Hello, {i}!"))
+    print(sc.request(command="test", data=f"Hello, {i}!"))
+for i in range(5):
+    print(SC(bits=512).request(command="test", data=f"Hello, {i}!"))
 print("test socket client started.", flush=True)
+# # both for loops produce same result
+# # while the later one uses a new DH key in each loop
 # Data:   Hello, 0!
 # Data:   Hello, 1!
 # Data:   Hello, 2!
