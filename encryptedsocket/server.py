@@ -12,8 +12,8 @@ __ALL__ = ["SS"]
 
 
 class SS(object):
-    def __init__(self, functions: encryptedsocket_function = None, host: str = "127.199.71.10", port: int = 39291,
-                 bits: int = 1024, private_key: bytes = None) -> None:
+    def __init__(self, key_pair: key_pair_format, functions: encryptedsocket_function = None,
+                 host: str = "127.199.71.10", port: int = 39291) -> None:
         self.sema = threading.Semaphore(1)
         self.terminate = False
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -21,13 +21,10 @@ class SS(object):
         self.s.listen(5)
         self.__key = {}
         self.functions = functions or {}
-        self.rsae = lambda v: EasyRSA(private_key=private_key).encrypt(v)
-        self.sign = lambda v: EasyRSA(private_key=private_key).sign(v)
-        self.rsad = lambda v: EasyRSA(private_key=private_key).decrypt(v)
-        self.__a = randi(bits)
-        self.__g = randi(bits)
-        self.__p = randi(bits)
-        self.__akey = pow(self.__g, self.__a, self.__p)
+        self.rsae = lambda v: EasyRSA(private_key=key_pair["private_key"]).encrypt(v)
+        self.sign = lambda v: EasyRSA(private_key=key_pair["private_key"]).sign(v)
+        self.rsad = lambda v: EasyRSA(private_key=key_pair["private_key"]).decrypt(v)
+        self.pkey = lambda: key_pair["public_key"]
 
     def handler(self, conn: socket.socket, addr: tuple) -> None:
         self.sema.acquire()
@@ -44,11 +41,11 @@ class SS(object):
                     request = decrypt(self.__key[uid], request)
                 else:
                     request = jl(request)
-                if request["command"] == "get_akey":
-                    v = dict(g=self.__g, p=self.__p, akey=self.__akey)
+                if request["command"] == "get_pkey":
+                    v = self.pkey()
                     response = (
-                        b64e(self.sign(jd(v))),
-                        v
+                        b64e(self.sign(v)),
+                        b64e(v)
                     )
                 elif request["command"] in self.functions:
                     try:
@@ -63,13 +60,12 @@ class SS(object):
                 if uid in self.__key:
                     response = encrypt(self.__key[uid], response)
                 conn.sendall(response)
-                if request["command"] == "set_bkey":
+                if request["command"] == "set_key":
                     try:
-                        sk, bkey = request["data"]
-                        bkey = int(AESCipher(self.rsad(b64d(sk))).decrypt(bkey))
+                        bkey = self.rsad(b64d(request["data"]))
                     except:
                         raise Exception("current connection is under MITM attack")
-                    self.__key[uid] = str(pow(bkey, self.__a, self.__p))
+                    self.__key[uid] = bkey
         except:
             p(debug_info()[0])
         finally:

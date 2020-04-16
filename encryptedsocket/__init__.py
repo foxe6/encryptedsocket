@@ -1,4 +1,4 @@
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 __keywords__ = ["encrypted socket server client"]
 __entry__ = "test:main"
 
