@@ -14,7 +14,6 @@ __ALL__ = ["SS"]
 class SS(object):
     def __init__(self, key_pair: key_pair_format, functions: encryptedsocket_function = None,
                  host: str = "127.199.71.10", port: int = 39291) -> None:
-        self.sema = threading.Semaphore(1)
         self.terminate = False
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.s.bind((host, int(port)))
@@ -27,7 +26,6 @@ class SS(object):
         self.pkey = lambda: key_pair["public_key"]
 
     def handler(self, conn: socket.socket, addr: tuple) -> None:
-        self.sema.acquire()
         uid = addr[0]+":"+str(addr[1])
         p(f"connected\t{uid}")
         try:
@@ -70,7 +68,6 @@ class SS(object):
             p(debug_info()[0])
         finally:
             conn.close()
-            self.sema.release()
             p(f"disconnected\t{uid}")
 
     def start(self) -> None:

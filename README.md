@@ -8,7 +8,7 @@
 [![made](https://img.shields.io/badge/Made%20with-PyCharm-red.svg)](https://paypal.me/foxe6)
 </badges>
 
-<i>Secured yet simple socket server-client for interprocess communications.</i>
+<i>Secured yet simple socket server-client for interprocess communications with RSA and AES.</i>
 
 # Hierarchy
 
@@ -38,19 +38,19 @@ kp = EasyRSA(bits=1024).gen_key_pair()
 def test(data):
     return f"Data:\t{data}"
 functions = dict(test=test)
-SS(functions=functions, private_key=kp["private_key"]).start()
+SS(functions=functions, key_pair=kp).start()
 print("test socket server started.", flush=True)
 # # Nothing is printed, you must start it from an other thread
 
 # client
-sc = SC(public_key=kp["public_key"])
+sc = SC()
 for i in range(5):
     print(sc.request(command="test", data=f"Hello, {i}!"))
 for i in range(5):
-    print(SC(bits=512).request(command="test", data=f"Hello, {i}!"))
+    print(SC().request(command="test", data=f"Hello, {i}!"))
 print("test socket client started.", flush=True)
 # # both for loops produce same result
-# # while the later one uses a new DH key in each loop
+# # while the later one uses a new key in each loop
 # Data:   Hello, 0!
 # Data:   Hello, 1!
 # Data:   Hello, 2!
