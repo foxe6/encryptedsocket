@@ -9,14 +9,15 @@ __ALL__ = ["SC"]
 
 
 class SC(object):
-    def __init__(self, host: str = "127.199.71.10", port: int = 39291, encrypted: bool = True) -> None:
+    def __init__(self, host: str = "127.199.71.10", port: int = 39291,
+                 bits: int = 1024, encrypted: bool = True) -> None:
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.s.connect((host, int(port)))
         self.encrypted = encrypted
         self.key = None
         if self.encrypted:
             ingredients = self.request("get_akey")
-            b = randi()
+            b = randi(bits)
             g = ingredients["g"]
             p = ingredients["p"]
             bkey = pow(g, b, p)

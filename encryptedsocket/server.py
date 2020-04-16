@@ -12,7 +12,7 @@ __ALL__ = ["SS"]
 
 class SS(object):
     def __init__(self, functions: encryptedsocket_function = None, host: str = "127.199.71.10", port: int = 39291,
-                 encrypted: bool = True) -> None:
+                 bits: int = 1024, encrypted: bool = True) -> None:
         self.sema = threading.Semaphore(1)
         self.terminate = False
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -21,9 +21,9 @@ class SS(object):
         self.__key = {}
         self.functions = functions or {}
         self.encrypted = encrypted
-        self.__a = randi()
-        self.__g = randi()
-        self.__p = randi()
+        self.__a = randi(bits)
+        self.__g = randi(bits)
+        self.__p = randi(bits)
         self.__akey = pow(self.__g, self.__a, self.__p)
 
     def handler(self, conn: socket.socket, addr: tuple) -> None:
