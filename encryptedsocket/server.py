@@ -5,6 +5,7 @@ import threading
 from .utils import *
 from omnitools import encryptedsocket_function, randi, p, utf8d
 from debugging import *
+from easyrsa import *
 
 
 __ALL__ = ["SS"]
@@ -12,7 +13,7 @@ __ALL__ = ["SS"]
 
 class SS(object):
     def __init__(self, functions: encryptedsocket_function = None, host: str = "127.199.71.10", port: int = 39291,
-                 bits: int = 1024, encrypted: bool = True) -> None:
+                 bits: int = 1024, private_key: bytes = None) -> None:
         self.sema = threading.Semaphore(1)
         self.terminate = False
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -20,7 +21,8 @@ class SS(object):
         self.s.listen(5)
         self.__key = {}
         self.functions = functions or {}
-        self.encrypted = encrypted
+        self.rsae = lambda v: EasyRSA(private_key=private_key).encrypt(v)
+        self.sign = lambda v: EasyRSA(private_key=private_key).sign(v)
         self.__a = randi(bits)
         self.__g = randi(bits)
         self.__p = randi(bits)
@@ -33,16 +35,20 @@ class SS(object):
         try:
             while True:
                 request = utf8d(conn.recv(1024*4))
-                if not request and self.encrypted:
+                if not request:
                     self.__key.pop(uid)
                     break
                 response = {}
-                if uid in self.__key and self.encrypted:
+                if uid in self.__key:
                     request = decrypt(self.__key[uid], request)
                 else:
                     request = jl(request)
-                if request["command"] == "get_akey" and self.encrypted:
-                    response = dict(g=self.__g, p=self.__p, akey=self.__akey)
+                if request["command"] == "get_akey":
+                    v = dict(g=self.__g, p=self.__p, akey=self.__akey)
+                    response = (
+                        b64e(self.sign(jd(v))),
+                        v
+                    )
                 elif request["command"] in self.functions:
                     try:
                         response = self.functions[request["command"]](request["data"])
@@ -53,10 +59,10 @@ class SS(object):
                     response = jd_and_utf8e(response)
                 except TypeError:
                     response = pickle.dumps(response)
-                if uid in self.__key and self.encrypted:
+                if uid in self.__key:
                     response = encrypt(self.__key[uid], response)
                 conn.sendall(response)
-                if request["command"] == "set_bkey" and self.encrypted:
+                if request["command"] == "set_bkey":
                     self.__key[uid] = str(pow(request["data"], self.__a, self.__p))
         except:
             p(debug_info()[0])

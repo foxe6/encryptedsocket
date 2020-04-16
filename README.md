@@ -25,11 +25,6 @@ encryptedsocket
 
 ## python
 ```python
-# You can start an unencrypted socket server
-# if you know what you are doing
-# SS(host="remote ip", port=12321, encrypted=False)
-# SC(host="remote ip", port=12321, encrypted=False)
-
 # You can transmit objects as long as
 # both sides have access to their classes
 
