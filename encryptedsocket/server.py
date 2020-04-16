@@ -23,6 +23,7 @@ class SS(object):
         self.functions = functions or {}
         self.rsae = lambda v: EasyRSA(private_key=private_key).encrypt(v)
         self.sign = lambda v: EasyRSA(private_key=private_key).sign(v)
+        self.rsad = lambda v: EasyRSA(private_key=private_key).decrypt(v)
         self.__a = randi(bits)
         self.__g = randi(bits)
         self.__p = randi(bits)
@@ -63,7 +64,12 @@ class SS(object):
                     response = encrypt(self.__key[uid], response)
                 conn.sendall(response)
                 if request["command"] == "set_bkey":
-                    self.__key[uid] = str(pow(request["data"], self.__a, self.__p))
+                    try:
+                        sk, bkey = request["data"]
+                        bkey = int(AESCipher(self.rsad(b64d(sk))).decrypt(bkey))
+                    except:
+                        raise Exception("current connection is under MITM attack")
+                    self.__key[uid] = str(pow(bkey, self.__a, self.__p))
         except:
             p(debug_info()[0])
         finally:

@@ -20,8 +20,11 @@ class SC(object):
             b = randi(bits)
             g = ingredients["g"]
             p = ingredients["p"]
-            bkey = pow(g, b, p)
-            self.request("set_bkey", bkey)
+            bkey = str(pow(g, b, p))
+            sk = randb(64)
+            bkey = AESCipher(sk).encrypt(bkey)
+            sk = b64e(EasyRSA(public_key=public_key).encrypt(sk))
+            self.request("set_bkey", (sk, bkey))
             self.key = str(pow(ingredients["akey"], b, p))
         else:
             raise Exception("current connection is under MITM attack")

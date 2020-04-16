@@ -57,8 +57,5 @@ print("test socket client started.", flush=True)
 
 ## shell
 ```shell script
-rem encryptedsocket.exe {server|client}
-rem echo test server-client example
-encryptedsocket.exe server
-encryptedsocket.exe client
+
 ```
