@@ -1,6 +1,5 @@
-__version__ = "0.7.0"
+__version__ = "0.7.1"
 __keywords__ = ["encrypted socket server client"]
-__entry__ = "test:main"
 
 
 if not __version__.endswith(".0"):

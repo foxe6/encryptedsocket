@@ -47,7 +47,7 @@ class SS(object):
                     )
                 elif request["command"] in self.functions:
                     try:
-                        response = self.functions[request["command"]](request["data"])
+                        response = self.functions[request["command"]](*request["data"])
                     except:
                         response = debug_info()
                 try:
