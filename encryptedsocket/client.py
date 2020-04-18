@@ -14,7 +14,7 @@ class SC(object):
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.s.connect((host, int(port)))
         self.key = None
-        hash, public_key = self.request(args("get_pkey"))
+        hash, public_key = self.request("get_pkey")
         public_key = b64d(public_key)
         if EasyRSA(public_key=public_key).verify(public_key, b64d(hash)):
             key = randb((RSA.import_key(public_key).n.bit_length()//8)-42)
