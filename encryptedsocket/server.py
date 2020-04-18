@@ -38,7 +38,7 @@ class SS(object):
                     request = decrypt(self.__key[uid], request)
                 else:
                     request = jl(request)
-                if request["command"] == "get_pkey":
+                if request["command"] == "get_pkey" and uid not in self.__key:
                     v = self.pkey()
                     response = (
                         b64e(self.sign(v)),
@@ -57,7 +57,7 @@ class SS(object):
                 if uid in self.__key:
                     response = encrypt(self.__key[uid], response)
                 conn.sendall(response)
-                if request["command"] == "set_key":
+                if request["command"] == "set_key" and uid not in self.__key:
                     try:
                         bkey = b""
                         for part in request["data"][0]:

@@ -58,8 +58,3 @@ print("test socket client started.", flush=True)
 # Data:   Hello, 4!
 # test socket client started.
 ```
-
-## shell
-```shell script
-
-```
