@@ -2,7 +2,7 @@ import socket
 import pickle
 import threading
 from .utils import *
-from omnitools import encryptedsocket_function, randi, p, utf8d
+from omnitools import encryptedsocket_function, p, utf8d, key_pair_format
 from debugging import *
 from easyrsa import *
 
