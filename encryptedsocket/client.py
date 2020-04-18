@@ -18,13 +18,7 @@ class SC(object):
         rsa = EasyRSA(public_key=public_key)
         if rsa.verify(public_key, b64d(hash)):
             key = randb(256)
-            org_key = key
-            _key = []
-            max_msg_size = EasyRSA(public_key=public_key).max_msg_size()
-            while org_key:
-                _key.append(b64e(rsa.encrypt(org_key[:max_msg_size])))
-                org_key = org_key[max_msg_size:]
-            self.request("set_key", args(*_key))
+            self.request(command="set_key", data=args(b64e(rsa.encrypt(key))))
             self.key = key
         else:
             raise Exception("current connection is under MITM attack")
