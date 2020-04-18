@@ -59,7 +59,7 @@ class SS(object):
                 conn.sendall(response)
                 if request["command"] == "set_key" and uid not in self.__key:
                     try:
-                        bkey = self.rsad(b64d(request["data"][0]))
+                        bkey = self.rsad(b64d(request["data"][0][0]))
                     except:
                         raise Exception("current connection is under MITM attack")
                     self.__key[uid] = bkey
