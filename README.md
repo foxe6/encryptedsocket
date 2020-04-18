@@ -8,7 +8,7 @@
 [![made](https://img.shields.io/badge/Made%20with-PyCharm-red.svg)](https://paypal.me/foxe6)
 </badges>
 
-<i>Secured yet simple socket server-client for interprocess communications with RSA and AES.</i>
+<i>Secured yet simple socket server-client for interprocess communications with RSA and AES-256.</i>
 
 # Hierarchy
 
@@ -45,9 +45,9 @@ print("test socket server started.", flush=True)
 # client
 sc = SC()
 for i in range(5):
-    print(sc.request(command="test", data=f"Hello, {i}!"))
+    print(sc.request(command="test", data=args(f"Hello, {i}!")))
 for i in range(5):
-    print(SC().request(command="test", data=f"Hello, {i}!"))
+    print(SC().request(command="test", data=args(f"Hello, {i}!")))
 print("test socket client started.", flush=True)
 # # both for loops produce same result
 # # while the later one uses a new key in each loop

@@ -1,5 +1,4 @@
 import socket
-import json
 import pickle
 import threading
 from .utils import *
@@ -60,7 +59,9 @@ class SS(object):
                 conn.sendall(response)
                 if request["command"] == "set_key":
                     try:
-                        bkey = self.rsad(b64d(*request["data"][0]))
+                        bkey = b""
+                        for part in request["data"][0]:
+                            bkey += self.rsad(b64d(part))
                     except:
                         raise Exception("current connection is under MITM attack")
                     self.__key[uid] = bkey

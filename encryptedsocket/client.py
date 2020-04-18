@@ -1,5 +1,4 @@
 import socket
-import json
 import pickle
 from .utils import *
 from omnitools import jd_and_utf8e, utf8d, args
@@ -16,9 +15,16 @@ class SC(object):
         self.key = None
         hash, public_key = self.request("get_pkey")
         public_key = b64d(public_key)
-        if EasyRSA(public_key=public_key).verify(public_key, b64d(hash)):
-            key = randb((RSA.import_key(public_key).n.bit_length()//8)-42)
-            self.request("set_key", args(b64e(EasyRSA(public_key=public_key).encrypt(key))))
+        rsa = EasyRSA(public_key=public_key)
+        if rsa.verify(public_key, b64d(hash)):
+            key = randb(256)
+            org_key = key
+            _key = []
+            max_msg_size = rsa.max_msg_size()
+            while org_key:
+                _key.append(b64e(rsa.encrypt(org_key[:max_msg_size])))
+                org_key = org_key[max_msg_size:]
+            self.request("set_key", args(*_key))
             self.key = key
         else:
             raise Exception("current connection is under MITM attack")
