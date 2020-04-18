@@ -1,7 +1,7 @@
 import socket
 import pickle
 from .utils import *
-from omnitools import jd_and_utf8e, utf8d, args
+from omnitools import jd_and_utf8e, utf8d, args, randb
 from easyrsa import *
 
 
