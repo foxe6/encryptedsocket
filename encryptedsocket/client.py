@@ -20,7 +20,7 @@ class SC(object):
             key = randb(256)
             org_key = key
             _key = []
-            max_msg_size = rsa.max_msg_size()
+            max_msg_size = EasyRSA(public_key=public_key).max_msg_size()
             while org_key:
                 _key.append(b64e(rsa.encrypt(org_key[:max_msg_size])))
                 org_key = org_key[max_msg_size:]
