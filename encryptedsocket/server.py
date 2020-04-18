@@ -47,7 +47,7 @@ class SS(object):
                     )
                 elif request["command"] in self.functions:
                     try:
-                        response = self.functions[request["command"]](*request["data"])
+                        response = self.functions[request["command"]](*request["data"][0], **request["data"][1])
                     except:
                         response = debug_info()
                 try:
@@ -60,7 +60,7 @@ class SS(object):
                 conn.sendall(response)
                 if request["command"] == "set_key":
                     try:
-                        bkey = self.rsad(b64d(request["data"]))
+                        bkey = self.rsad(b64d(request["data"][0]))
                     except:
                         raise Exception("current connection is under MITM attack")
                     self.__key[uid] = bkey

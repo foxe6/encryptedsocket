@@ -2,7 +2,7 @@ import socket
 import json
 import pickle
 from .utils import *
-from omnitools import randi, jd_and_utf8e, utf8d
+from omnitools import jd_and_utf8e, utf8d, args
 from easyrsa import *
 
 
@@ -14,11 +14,11 @@ class SC(object):
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.s.connect((host, int(port)))
         self.key = None
-        hash, public_key = self.request("get_pkey")
+        hash, public_key = self.request(args("get_pkey"))
         public_key = b64d(public_key)
         if EasyRSA(public_key=public_key).verify(public_key, b64d(hash)):
             key = randb((RSA.import_key(public_key).n.bit_length()//8)-42)
-            self.request("set_key", b64e(EasyRSA(public_key=public_key).encrypt(key)))
+            self.request("set_key", args(b64e(EasyRSA(public_key=public_key).encrypt(key))))
             self.key = key
         else:
             raise Exception("current connection is under MITM attack")
