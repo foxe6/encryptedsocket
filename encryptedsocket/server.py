@@ -30,11 +30,17 @@ class SS(object):
         p(f"connected\t{uid}")
         try:
             while True:
-                request = utf8d(conn.recv(1024*4))
+                len_request = conn.recv(4)
+                len_request = struct.unpack('>I', len_request)[0]
+                request = b""
+                while len(request) < len_request:
+                    request += conn.recv(len_request-len(request))
+                    if not request:
+                        break
+                request = utf8d(request)
                 if not request:
                     self.__key.pop(uid)
                     break
-                response = {}
                 if uid in self.__key:
                     request = decrypt(self.__key[uid], request)
                 else:
@@ -52,7 +58,7 @@ class SS(object):
                         response = debug_info()
                 else:
                     try:
-                        raise Exception("request command {} is not in socket functions".format(request["command"]))
+                        raise Exception("request command '{}' is not in socket functions".format(request["command"]))
                     except:
                         response = debug_info()
                 try:

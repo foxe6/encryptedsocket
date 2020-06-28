@@ -32,7 +32,7 @@ class SC(object):
             request = pickle.dumps(request)
         if self.key:
             request = encrypt(self.key, request)
-        self.s.send(request)
+        self.s.sendall(struct.pack('>I', len(request))+request)
         len_response = self.s.recv(4)
         if not len_response:
             return None
