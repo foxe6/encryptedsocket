@@ -50,6 +50,11 @@ class SS(object):
                         response = self.functions[request["command"]](*request["data"][0], **request["data"][1])
                     except:
                         response = debug_info()
+                else:
+                    try:
+                        raise Exception("request command {} is not in socket functions".format(request["command"]))
+                    except:
+                        response = debug_info()
                 try:
                     from omnitools import jd_and_utf8e
                     response = jd_and_utf8e(response)
