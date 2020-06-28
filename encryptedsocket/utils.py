@@ -2,9 +2,22 @@ from aescipher import *
 import pickle
 from omnitools import mac, jl
 from typing import *
+import struct
+import socket
 
 
-__ALL__ = ["encrypt", "decrypt"]
+__ALL__ = ["encrypt", "decrypt", "recv_all"]
+
+
+def recv_all(conn: socket.socket) -> bytes:
+    length = conn.recv(4)
+    length = struct.unpack('>I', length)[0]
+    content = b""
+    while len(content) < length:
+        content += conn.recv(length-len(content))
+        if not content:
+            break
+    return content
 
 
 def encrypt(key: str_or_bytes, plaintext: str_or_bytes) -> bytes:

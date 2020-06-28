@@ -33,16 +33,7 @@ class SC(object):
         if self.key:
             request = encrypt(self.key, request)
         self.s.sendall(struct.pack('>I', len(request))+request)
-        len_response = self.s.recv(4)
-        if not len_response:
-            return None
-        len_response = struct.unpack('>I', len_response)[0]
-        response = b""
-        while len(response) < len_response:
-            response += self.s.recv(len_response-len(response))
-            if not response:
-                break
-        response = utf8d(response)
+        response = utf8d(recv_all(self.s))
         if self.key:
             return decrypt(self.key, response)
         else:

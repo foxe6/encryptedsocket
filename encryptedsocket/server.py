@@ -30,14 +30,7 @@ class SS(object):
         p(f"connected\t{uid}")
         try:
             while True:
-                len_request = conn.recv(4)
-                len_request = struct.unpack('>I', len_request)[0]
-                request = b""
-                while len(request) < len_request:
-                    request += conn.recv(len_request-len(request))
-                    if not request:
-                        break
-                request = utf8d(request)
+                request = utf8d(recv_all(conn))
                 if not request:
                     self.__key.pop(uid)
                     break
