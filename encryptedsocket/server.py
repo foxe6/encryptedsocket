@@ -1,3 +1,4 @@
+import struct
 import socket
 import pickle
 import threading
@@ -56,7 +57,7 @@ class SS(object):
                     response = pickle.dumps(response)
                 if uid in self.__key:
                     response = encrypt(self.__key[uid], response)
-                conn.sendall(response)
+                conn.sendall(struct.pack('>I', len(response))+response)
                 if request["command"] == "set_key" and uid not in self.__key:
                     try:
                         bkey = self.rsad(b64d(request["data"][0][0]))

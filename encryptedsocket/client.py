@@ -1,5 +1,6 @@
 import socket
 import pickle
+import struct
 from .utils import *
 from omnitools import jd_and_utf8e, utf8d, args, randb
 from easyrsa import *
@@ -32,12 +33,19 @@ class SC(object):
         if self.key:
             request = encrypt(self.key, request)
         self.s.send(request)
-        while True:
-            response = utf8d(self.s.recv(1024*4))
-            if response:
-                if self.key:
-                    return decrypt(self.key, response)
-                else:
-                    return jl(response)
+        len_response = self.s.recv(4)
+        if not len_response:
+            return None
+        len_response = struct.unpack('>I', len_response)[0]
+        response = b""
+        while len(response) < len_response:
+            response += self.s.recv(len_response-len(response))
+            if not response:
+                break
+        response = utf8d(response)
+        if self.key:
+            return decrypt(self.key, response)
+        else:
+            return jl(response)
 
 
