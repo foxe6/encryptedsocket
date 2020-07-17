@@ -11,6 +11,8 @@ __ALL__ = ["encrypt", "decrypt", "recv_all"]
 
 def recv_all(conn: socket.socket) -> bytes:
     length = conn.recv(4)
+    if length == b"":
+        return b""
     length = struct.unpack('>I', length)[0]
     content = b""
     while len(content) < length:
