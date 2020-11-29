@@ -13,8 +13,10 @@ __ALL__ = ["SS"]
 
 class SS(object):
     def __init__(self, key_pair: key_pair_format, functions: encryptedsocket_function = None,
-                 host: str = "127.199.71.10", port: int = 39291) -> None:
+                 host: str = "127.199.71.10", port: int = 39291,
+                 silent: bool = False) -> None:
         self.terminate = False
+        self.silent = silent
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.s.bind((host, int(port)))
         self.s.listen(5)
@@ -27,7 +29,8 @@ class SS(object):
 
     def handler(self, conn: socket.socket, addr: tuple) -> None:
         uid = addr[0]+":"+str(addr[1])
-        p(f"connected\t{uid}")
+        if not self.silent:
+            p(f"connected\t{uid}")
         try:
             while True:
                 request = utf8d(recv_all(conn))
@@ -72,7 +75,8 @@ class SS(object):
             p(debug_info()[0])
         finally:
             conn.close()
-            p(f"disconnected\t{uid}")
+            if not self.silent:
+                p(f"disconnected\t{uid}")
 
     def start(self) -> None:
         try:
